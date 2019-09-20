@@ -1,6 +1,6 @@
 package org.jugvale.certificate.generator.rest;
 
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
@@ -21,8 +21,9 @@ public class ConferenceDataFetcherResource {
     Instance<ConferenceDataFetcher> dataFetchers;
     
     @GET
-    public List<String> fetchers() {
-        return dataFetchers.stream().map(ConferenceDataFetcher::description).collect(Collectors.toList());
+    public Map<String, String> fetchers() {
+        return dataFetchers.stream().collect(Collectors.toMap(ConferenceDataFetcher::name, 
+                                                              ConferenceDataFetcher::description));
     }
     
 }

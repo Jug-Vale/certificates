@@ -1,16 +1,5 @@
 package org.jugvale.certificate.generator.fetcher.impl.csv;
 
-import static org.jugvale.certificate.generator.fetcher.impl.csv.CSVUtilities.getBooleanValue;
-import static org.jugvale.certificate.generator.fetcher.impl.csv.CSVUtilities.getLongValue;
-import static org.jugvale.certificate.generator.fetcher.impl.csv.CSVUtilities.getStringValue;
-import static org.jugvale.certificate.generator.fetcher.impl.csv.CSVUtilities.columns;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.concurrent.atomic.AtomicLong;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
@@ -19,9 +8,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 import org.jugvale.certificate.generator.fetcher.ConferenceData;
 import org.jugvale.certificate.generator.fetcher.ConferenceDataFetcher;
-import org.jugvale.certificate.generator.model.Attendee;
-import org.jugvale.certificate.generator.model.Conference;
-import org.jugvale.certificate.generator.model.Registration;
 
 /**
  * 
@@ -35,6 +21,7 @@ import org.jugvale.certificate.generator.model.Registration;
 public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
 
     public static final String DESCRIPTION = "Fetches data from CSV file";
+    private static final String NAME = "CSV";
     public static final String FILE_PROP = "certificate.fetcher.csv.file";
     
     Logger logger = Logger.getLogger(CSVConferenceDataFetcher.class);
@@ -50,6 +37,11 @@ public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
     public String description() {
         return DESCRIPTION;
     }
+    
+    @Override
+    public String name() {
+        return NAME;
+    }
 
     @Override
     public ConferenceData conferenceData() {
@@ -59,5 +51,5 @@ public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
         }
         return CSVProcessor.processCSV(csvConfFilePath);
     }
-    
+
 }

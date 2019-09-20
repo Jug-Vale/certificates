@@ -26,6 +26,8 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     
     public static final String DESCRIPTION = "Fetch from Configuration";
 
+    private static final String NAME = "Configuration";
+
     @Inject
     @ConfigProperty(name = "example.conference.name", defaultValue = "Mock Conference")
     String conferenceName;
@@ -41,6 +43,11 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     private Conference conference;
 
     private Registration registration;
+    
+    @Override
+    public String name() {
+        return NAME;
+    }
     
     @PostConstruct
     public void initData() {
@@ -70,5 +77,6 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
                                  Arrays.asList(attendee), 
                                  Arrays.asList(registration));
     }
+
 
 }

@@ -11,11 +11,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.jugvale.certificate.generator.fetcher.ConferenceData;
 import org.jugvale.certificate.generator.model.Attendee;
 import org.jugvale.certificate.generator.model.Conference;
 import org.jugvale.certificate.generator.model.Registration;
 
+@ApplicationScoped
 public class CSVProcessor {
     
     private static final int TOTAL_COLUMNS = 7;
