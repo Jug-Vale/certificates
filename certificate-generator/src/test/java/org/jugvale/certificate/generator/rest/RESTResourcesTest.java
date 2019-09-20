@@ -21,10 +21,14 @@ public class RESTResourcesTest {
     private static final String CERTIFICATE_MODEL_URI = "/certificate-model";
     private static final String DATA_FETCHERS_URI = "/conference-data-fetchers";
     
-    String modelStr = getCertificateJson();
-
     @Test
     public void testCertificateModelResource() {
+        CertificateModel certificateModel = new CertificateModel();
+        certificateModel.content = "certificate content";
+        certificateModel.attendeeNameField = "attendeeNamefield";
+        certificateModel.certificateKeyField = "certificateKey";
+        String modelStr = JsonbBuilder.create().toJson(certificateModel);
+        
         given().when()
                .get(CERTIFICATE_MODEL_URI)
                .then()
@@ -37,6 +41,11 @@ public class RESTResourcesTest {
                .then()
                .statusCode(201)
                .body(is("1"));
+        given().when()
+               .get(CERTIFICATE_MODEL_URI)
+               .then()
+               .statusCode(200)
+               .body(containsString(certificateModel.content));
         given().when()
                .delete(CERTIFICATE_MODEL_URI + "/1")
                .then()
@@ -58,14 +67,7 @@ public class RESTResourcesTest {
                .body(allOf(
                        containsString(CSVConferenceDataFetcher.DESCRIPTION),
                        containsString(ConfigurationDataFetcher.DESCRIPTION)
-              ));
-    }
-
-    private String getCertificateJson() {
-        CertificateModel model = new CertificateModel();
-        model.content = "test";
-        model.attendeeNameField = "field";
-        String modelStr = JsonbBuilder.create().toJson(model);
-        return modelStr;
+                     )
+               );
     }
 }
