@@ -1,5 +1,7 @@
 package org.jugvale.certificate.generator.fetcher;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jugvale.certificate.generator.model.Attendee;
@@ -23,16 +25,26 @@ public class ConferenceData {
                                     List<Registration> registrations) {
         return new ConferenceData(conferences, attendees, registrations);
     }
+    
+    public static ConferenceData empty() {
+        return new ConferenceData(Collections.emptyList(), 
+                                  Collections.emptyList(), 
+                                  Collections.emptyList());
+    }
+    
+    public static ConferenceData create() {
+        return new ConferenceData(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
 
-    List<Conference> getConferences(){
+    public List<Conference> getConferences(){
         return conferences;
     }
     
-    List<Attendee> attendees() {
+    public List<Attendee> getAttendees() {
         return attendees;
     }
     
-    List<Registration> registrations() {
+    public List<Registration> getRegistrations() {
         return registrations;
     }
 

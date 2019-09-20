@@ -1,7 +1,9 @@
 package org.jugvale.certificate.generator.rest;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 
 import javax.json.bind.JsonbBuilder;
 
