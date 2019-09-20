@@ -10,7 +10,9 @@ public class CertificateModel extends PanacheEntity {
 
   @Lob
   public String content;
-  public String attendeeNameFieldId;
-
   
+  public String attendeeNameField;
+  
+  public String certificateKeyField;
+ 
 }
