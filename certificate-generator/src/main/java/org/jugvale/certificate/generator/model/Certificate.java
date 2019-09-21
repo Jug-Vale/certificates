@@ -21,5 +21,8 @@ public class Certificate extends PanacheEntity {
 
   @ManyToOne
   public CertificateModel certificateModel;
+  
+  @ManyToOne
+  public Registration registration;
 
 }

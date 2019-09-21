@@ -16,5 +16,5 @@ public class CertificateStorage extends PanacheEntity {
     public byte[] contentBin;
     
     @ManyToOne
-    Certificate certificate;
+    public Certificate certificate;
 }
