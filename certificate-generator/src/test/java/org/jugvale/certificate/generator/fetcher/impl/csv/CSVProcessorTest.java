@@ -29,35 +29,43 @@ public class CSVProcessorTest {
         Conference conference = conferenceData.getConferences().get(0);
         
         assertEquals("The big IT conf", conference.name);
-        assertEquals(1, conference.id);
+        assertEquals(1, conference.external_id);
         
         List<Attendee> attendees = conferenceData.getAttendees();
         assertEquals(3, attendees.size());
         
-        assertEquals(1, attendees.get(0).id);
-        assertEquals("antonio@email.com", attendees.get(0).email);
-        assertEquals("Antonio Camara", attendees.get(0).name);
-        
-        assertEquals(2, attendees.get(1).id);
-        assertEquals("luana@email.com", attendees.get(1).email);
-        assertEquals("Luana Camara", attendees.get(1).name);
+        Attendee attendee = attendees.get(0);
+        assertEquals("antonio@email.com", attendee.email);
+        assertEquals("Antonio Camara", attendee.name);
         
         
-        assertEquals(3, attendees.get(2).id);
-        assertEquals("william@email.com", attendees.get(2).email);
-        assertEquals("William", attendees.get(2).name);
+        Attendee attendee2 = attendees.get(1);
+        assertEquals("luana@email.com", attendee2.email);
+        assertEquals("Luana Camara", attendee2.name);
+        
+        Attendee attendee3 = attendees.get(2);
+        assertEquals("william@email.com", attendee3.email);
+        assertEquals("William", attendee3.name);
         
         
         List<Registration> registrations = conferenceData.getRegistrations();
         
         assertEquals(3, registrations.size());
         
-        assertTrue(registrations.get(0).attendance);
-        assertEquals(1, registrations.get(0).id);
-        assertTrue(registrations.get(1).attendance);
-        assertEquals(2, registrations.get(1).id);
-        assertTrue(registrations.get(2).attendance);
-        assertEquals(3, registrations.get(2).id);
+        Registration registration = registrations.get(0);
+        assertTrue(registration.attendance);
+        assertEquals(conference, registration.conference);
+        assertEquals(attendee, registration.attendee);
+        
+        Registration registration2 = registrations.get(1);
+        assertTrue(registration2.attendance);
+        assertEquals(conference, registration2.conference);
+        assertEquals(attendee2, registration2.attendee);
+        
+        Registration registration3 = registrations.get(2);
+        assertTrue(registration3.attendance);
+        assertEquals(conference, registration3.conference);
+        assertEquals(attendee3, registration3.attendee);
         
     }
     
@@ -66,13 +74,7 @@ public class CSVProcessorTest {
         String badColumnsCSVPath = CSVProcessorTest.class
                                                    .getResource("/csv/bad_columns.csv")
                                                    .getFile();
-        String duplicateRegistrationCSVPath = CSVProcessorTest.class
-                                                              .getResource("/csv/duplicate_registration.csv")
-                                                              .getFile();
-        
         assertThrows(RuntimeException.class, () -> processor.processCSV(badColumnsCSVPath));
-        
-        assertThrows(RuntimeException.class, () -> processor.processCSV(duplicateRegistrationCSVPath));
         
     }
 }

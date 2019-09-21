@@ -9,7 +9,13 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
  */
 @Entity
 public class Conference extends PanacheEntity {
+    
+    public Long external_id;
   
-  public String name;
-  
+    public String name;
+
+    @Override
+    public String toString() {
+        return "Conference [external_id=" + external_id + ", name=" + name + "]";
+    }
 }

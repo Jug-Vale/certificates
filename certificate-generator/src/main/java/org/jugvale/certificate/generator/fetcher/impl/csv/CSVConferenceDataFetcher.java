@@ -46,7 +46,7 @@ public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
     @Override
     public ConferenceData conferenceData() {
         if (csvConfFilePath.isEmpty()) {
-            logger.infov("CSV file path {} not specified.", FILE_PROP);
+            logger.infov("CSV file path {0} not specified.", FILE_PROP);
             return ConferenceData.empty();
         }
         return CSVProcessor.processCSV(csvConfFilePath);
