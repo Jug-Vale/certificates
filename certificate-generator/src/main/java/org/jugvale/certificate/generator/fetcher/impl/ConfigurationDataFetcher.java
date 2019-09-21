@@ -24,18 +24,24 @@ import org.jugvale.certificate.generator.model.Registration;
 @ApplicationScoped
 public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     
+
     public static final String DESCRIPTION = "Fetch from Configuration";
 
     public static final String NAME = "Configuration";
 
+    public static final long DEFAULT_EXTERNAL_CONF_ID = 1l;
+    public static final String DEFAULT_CONFERENCE_NAME = "Mock Conference";
+    public static final String DEFAULT_ATTENDEE_NAME = "John";
+    public static final String DEFAULT_ATTENDEE_EMAIL = "mock@email.com";
+
     @Inject
-    @ConfigProperty(name = "example.conference.name", defaultValue = "Mock Conference")
+    @ConfigProperty(name = "example.conference.name", defaultValue = DEFAULT_CONFERENCE_NAME)
     String conferenceName;
     
-    @ConfigProperty(name = "example.attendee.email", defaultValue = "mock@email.com")
+    @ConfigProperty(name = "example.attendee.email", defaultValue = DEFAULT_ATTENDEE_EMAIL)
     String attendeeEmail;
     
-    @ConfigProperty(name = "example.attendee.name", defaultValue = "John")
+    @ConfigProperty(name = "example.attendee.name", defaultValue = DEFAULT_ATTENDEE_NAME)
     String attendeeName;
 
     private Attendee attendee;
@@ -43,6 +49,10 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     private Conference conference;
 
     private Registration registration;
+
+    private ConferenceData conferenceData;
+
+    private ConferenceData staticConferenceData;
     
     @Override
     public String name() {
@@ -51,6 +61,28 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     
     @PostConstruct
     public void initData() {
+        conferenceData = buildConferenceData(DEFAULT_EXTERNAL_CONF_ID, conferenceName, attendeeEmail, attendeeName);
+        staticConferenceData = buildConferenceData(DEFAULT_EXTERNAL_CONF_ID, DEFAULT_CONFERENCE_NAME, DEFAULT_ATTENDEE_NAME, DEFAULT_ATTENDEE_EMAIL);
+    }
+
+    @Override
+    public String description() {
+        return DESCRIPTION;
+    }
+    
+    @Override
+    public ConferenceData conferenceData() {
+        return conferenceData;
+    }
+    
+    public ConferenceData staticConferenceData() {
+        return staticConferenceData;
+    }
+    
+    private ConferenceData buildConferenceData(Long extenalId, 
+                                               String conferenceName,
+                                               String attendeeEmail,
+                                               String attendeeName) {
         conference = new Conference();
         conference.external_id = 1l;
         conference.name = conferenceName;
@@ -63,19 +95,9 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
         registration.attendance = true;
         registration.attendee = attendee;
         registration.conference = conference;
-    }
-
-    @Override
-    public String description() {
-        return DESCRIPTION;
-    }
-    
-    @Override
-    public ConferenceData conferenceData() {
         return ConferenceData.of(Arrays.asList(conference), 
                                  Arrays.asList(attendee), 
                                  Arrays.asList(registration));
     }
-
-
+    
 }

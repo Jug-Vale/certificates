@@ -21,7 +21,7 @@ import org.jugvale.certificate.generator.fetcher.ConferenceDataFetcher;
 public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
 
     public static final String DESCRIPTION = "Fetches data from CSV file";
-    private static final String NAME = "CSV";
+    public static final String NAME = "CSV";
     public static final String FILE_PROP = "certificate.fetcher.csv.file";
     
     Logger logger = Logger.getLogger(CSVConferenceDataFetcher.class);

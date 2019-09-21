@@ -1,16 +1,11 @@
 package org.jugvale.certificate.generator.content.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.xml.transform.dom.DOMSource;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
 import org.apache.batik.dom.util.DOMUtilities;
@@ -27,7 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @ApplicationScoped
-public class SVGPdfCertificateContentGenerator implements CertificateContentGenerator {
+public class SVGPDFCertificateContentGenerator implements CertificateContentGenerator {
 
 
     private String parser;

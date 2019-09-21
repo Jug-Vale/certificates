@@ -13,6 +13,10 @@ public class ConferenceData {
     private List<Conference> conferences;
     private List<Attendee> attendees;
     private List<Registration> registrations;
+    
+    public ConferenceData() {
+        
+    }
 
     private ConferenceData(List<Conference> conferences, List<Attendee> attendees, List<Registration> registrations) {
         this.conferences = conferences;

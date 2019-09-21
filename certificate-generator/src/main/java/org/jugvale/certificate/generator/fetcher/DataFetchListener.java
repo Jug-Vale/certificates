@@ -2,6 +2,7 @@ package org.jugvale.certificate.generator.fetcher;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.enterprise.event.ObservesAsync;
 import javax.transaction.Transactional;
 
 import org.jugvale.certificate.generator.event.FetchedConferenceData;
@@ -11,7 +12,7 @@ import org.jugvale.certificate.generator.model.Registration;
 public class DataFetchListener {
     
     @Transactional
-    public void storeFetchedData(@Observes FetchedConferenceData fetchedConferenceData) {
+    public void storeFetchedData(@ObservesAsync FetchedConferenceData fetchedConferenceData) {
         ConferenceData conferenceData = fetchedConferenceData.getConferenceData();
         persistConferenceData(conferenceData);
     }

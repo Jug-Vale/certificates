@@ -16,14 +16,12 @@ import org.jugvale.certificate.generator.model.CertificateStorage;
 import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
-
-public class SVGPdfCertificateContentGeneratorTest {
-
+public class SVGPDFCertificateContentGeneratorTest {
 
     @Test
     public void testGenerateStorage() throws IOException {
         
-        String svgFile = SVGPdfCertificateContentGeneratorTest.class.getResource("/svg/simple.svg").getFile();
+        String svgFile = SVGPDFCertificateContentGeneratorTest.class.getResource("/svg/simple.svg").getFile();
         
         CertificateModel model = new CertificateModel();
         model.attendeeNameField = "attendeeName";
@@ -38,7 +36,7 @@ public class SVGPdfCertificateContentGeneratorTest {
         certificate.registration.attendee = new Attendee();
         certificate.registration.attendee.name = "Antonio Smith";
 
-        SVGPdfCertificateContentGenerator generator = new SVGPdfCertificateContentGenerator();
+        SVGPDFCertificateContentGenerator generator = new SVGPDFCertificateContentGenerator();
         generator.init();
         CertificateStorage generatedContent = generator.generate(certificate);
         

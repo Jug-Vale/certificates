@@ -49,7 +49,7 @@ public class ConferenceDataFetcherResource {
         
         ConferenceData conferenceData = fetcher.conferenceData();
         
-        fetchedConferenceDataEvent.fire(new FetchedConferenceData(conferenceData));
+        fetchedConferenceDataEvent.fireAsync(new FetchedConferenceData(conferenceData));
         
         return Response.ok(conferenceData).build();
     }

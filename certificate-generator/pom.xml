@@ -53,6 +53,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
+    <!--  to be able to use async events -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-context-propagation</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-mariadb</artifactId>

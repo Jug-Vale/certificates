@@ -8,11 +8,13 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 @Entity
 public class CertificateModel extends PanacheEntity {
 
-  @Lob
-  public String content;
-  
-  public String attendeeNameField;
-  
-  public String certificateKeyField;
- 
+    public String name;
+    
+    @Lob
+    public String content;
+
+    public String attendeeNameField;
+
+    public String certificateKeyField;
+
 }
