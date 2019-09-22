@@ -16,9 +16,12 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplica
     
     @Override
     public Response toResponse(WebApplicationException exception) {
-        logger.warnv("Caught WebApplicationException, returning status {0}", exception.getResponse().getStatus());
+        Response response = exception.getResponse();
+        logger.warnv("Caught WebApplicationException, returning status {0} with message {1}", 
+                     response.getStatus(),
+                     exception.getMessage());
         logger.debug("Logging WebApplicationException", exception);
-        return exception.getResponse();
+        return response;
     }
 
 }

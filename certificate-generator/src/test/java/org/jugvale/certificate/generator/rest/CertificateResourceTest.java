@@ -4,15 +4,18 @@ import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.json.bind.JsonbBuilder;
 
+import org.apache.commons.io.IOUtils;
 import org.jugvale.certificate.generator.fetcher.ConferenceData;
 import org.jugvale.certificate.generator.fetcher.impl.ConfigurationDataFetcher;
 import org.jugvale.certificate.generator.model.Certificate;
@@ -22,6 +25,7 @@ import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 
 /**
  * CertificateResourceTest
@@ -65,10 +69,37 @@ public class CertificateResourceTest {
         assertEquals(model.id, certificate.certificateModel.id);
         assertNotNull(certificate.generationKey);
         
-        CertificateContent[] contents = get(CERTIFICATE_CONTENT_URI, certificate.id).then()
-                                                                                    .extract()
-                                                                                    .as(CertificateContent[].class);
-        assertEquals(certificate.id, contents[0].certificate.id);
+        CertificateContent content = given().accept(ContentType.JSON)
+                                            .get(CERTIFICATE_CONTENT_URI, certificate.id)
+                                            .then()
+                                            .extract()
+                                            .as(CertificateContent.class);
+        
+        assertEquals(certificate.id, content.certificate.id);
+
+        InputStream contentBinByIdIS = given().accept("application/pdf")
+                                          .get(CERTIFICATE_CONTENT_URI, certificate.id)
+                                          .then()
+                                          .statusCode(200)
+                                          .extract()
+                                          .asInputStream();
+        
+        byte[] contentBinById = IOUtils.toByteArray(contentBinByIdIS);
+        
+        assertArrayEquals(contentBinById, content.contentBin);
+        
+        InputStream contentBinByKeyIS = given().accept("application/pdf")
+                                              .get(CERTIFICATE_CONTENT_URI, certificate.id)
+                                              .then()
+                                              .statusCode(200)
+                                              .extract()
+                                              .asInputStream();
+
+        byte[] contentBinByKey = IOUtils.toByteArray(contentBinByKeyIS);
+        
+        assertArrayEquals(contentBinByKey, content.contentBin);
+        
+        get(CERTIFICATE_CONTENT_URI, "not_existing_key").then().statusCode(404);
         
         delete(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(204);
     }

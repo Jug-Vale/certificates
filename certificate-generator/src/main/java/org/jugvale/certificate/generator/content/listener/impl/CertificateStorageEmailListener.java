@@ -21,6 +21,7 @@ public class CertificateStorageEmailListener implements CertificateStorageListen
 
     @Override
     public void removedCertificateContent(Certificate content) {
+        
     }
     
     @Override

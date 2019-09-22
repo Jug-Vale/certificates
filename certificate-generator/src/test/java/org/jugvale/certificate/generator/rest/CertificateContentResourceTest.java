@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
-import io.quarkus.test.Mock;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
