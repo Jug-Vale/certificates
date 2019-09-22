@@ -1,6 +1,5 @@
 package org.jugvale.certificate.generator.rest;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.event.Event;
@@ -16,14 +15,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.jugvale.certificate.generator.CertificateKeyGenerator;
+import org.jugvale.certificate.generator.event.DeletedCertificateEvent;
 import org.jugvale.certificate.generator.event.NewCertificateEvent;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateModel;
-import org.jugvale.certificate.generator.model.CertificateStorage;
 import org.jugvale.certificate.generator.model.Registration;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-
 
 @Path("certificate")
 @Produces(MediaType.APPLICATION_JSON)
@@ -34,6 +30,9 @@ public class CertificateResource {
     
     @Inject
     Event<NewCertificateEvent> newCertificateEvent;
+    
+    @Inject
+    Event<DeletedCertificateEvent> deletedCertificateEvent;
     
     @POST
     @Transactional
@@ -69,8 +68,10 @@ public class CertificateResource {
     @Path("{id}")
     @Transactional
     public void remove(@PathParam("id") Long id) {
-        CertificateStorage.find("certificate.id", id).list().forEach(PanacheEntityBase::delete);
-        Certificate.delete("id", id);
+        Certificate certificate = Certificate.findById(id);
+        ResourceUtils.exceptionIfNull(certificate, "Certificate not found", Status.NOT_FOUND);
+        deletedCertificateEvent.fireAsync(new DeletedCertificateEvent(certificate))
+                               .thenApply(e -> Certificate.delete("id", id));
     }
         
 }

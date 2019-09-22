@@ -12,7 +12,7 @@ import java.util.UUID;
 import org.jugvale.certificate.generator.model.Attendee;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateModel;
-import org.jugvale.certificate.generator.model.CertificateStorage;
+import org.jugvale.certificate.generator.model.CertificateContent;
 import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class SVGPDFCertificateContentGeneratorTest {
 
         SVGPDFCertificateContentGenerator generator = new SVGPDFCertificateContentGenerator();
         generator.init();
-        CertificateStorage generatedContent = generator.generate(certificate);
+        CertificateContent generatedContent = generator.generate(certificate);
         
         // possibly better test the pdf and the generated svg
         assertTrue(generatedContent.content.contains(certificate.registration.attendee.name));

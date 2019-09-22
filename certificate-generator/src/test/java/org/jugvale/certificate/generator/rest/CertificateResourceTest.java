@@ -7,7 +7,6 @@ import static io.restassured.RestAssured.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,13 +32,11 @@ public class CertificateResourceTest {
     private static final String CERTIFICATE_URI_PARAM = "/certificate/{id}";   
     private static final String CERTIFICATE_GENERATE = CERTIFICATE_URI + "/model/{modelId}/registration/{registrationId}";
     private static final String CERTIFICATE_MODEL_URI = "/certificate-model";
-    private static final String CERTIFICATE_MODEL_URI_PARAM = CERTIFICATE_MODEL_URI + "/{name}";
     private static final String DATA_FETCHERS_URI = "/conference-data-fetchers";
     private static final String DATA_FETCHERS_URI_PARAM = DATA_FETCHERS_URI + "/{name}";
-    
 
     @Test
-    public void testCertificateResource() throws IOException {
+    public void testCertificateResource() throws Exception {
         createConferenceData();
         String svgFile = CertificateResourceTest.class.getResource("/svg/simple.svg").getFile();
         CertificateModel model = new CertificateModel();
@@ -67,8 +64,6 @@ public class CertificateResourceTest {
         assertNotNull(certificate.generationKey);
         
         delete(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(204);
-        delete(CERTIFICATE_MODEL_URI_PARAM, model.id).then().statusCode(204);
-        
     }
     
     private ConferenceData createConferenceData() {

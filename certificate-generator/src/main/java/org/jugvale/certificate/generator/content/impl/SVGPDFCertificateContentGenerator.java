@@ -17,7 +17,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.fop.svg.PDFTranscoder;
 import org.jugvale.certificate.generator.content.CertificateContentGenerator;
 import org.jugvale.certificate.generator.model.Certificate;
-import org.jugvale.certificate.generator.model.CertificateStorage;
+import org.jugvale.certificate.generator.model.CertificateContent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -35,7 +35,7 @@ public class SVGPDFCertificateContentGenerator implements CertificateContentGene
     }
 
     @Override
-    public CertificateStorage generate(Certificate certificate) {
+    public CertificateContent generate(Certificate certificate) {
         String attendeeNameField = certificate.certificateModel.attendeeNameField;
         String certificateKeyField = certificate.certificateModel.certificateKeyField;
         
@@ -48,7 +48,7 @@ public class SVGPDFCertificateContentGenerator implements CertificateContentGene
         attendeNameEl.setTextContent(certificate.registration.attendee.name);
         certificateKeyEl.setTextContent(certificate.generationKey);
         
-        CertificateStorage storage = new CertificateStorage();
+        CertificateContent storage = new CertificateContent();
         storage.certificate = certificate;
         storage.content = DOMUtilities.getXML(doc);
         storage.contentBin = generatePDF(doc);
