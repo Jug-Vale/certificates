@@ -52,9 +52,8 @@ public class CertificateModelResource {
   @DELETE
   @Path("{id}")
   @Transactional
-  public Response remove(@PathParam("id") long id) {
+  public void remove(@PathParam("id") long id) {
       CertificateModel.delete("id", id);
-      return Response.noContent().build();
   }
   
 

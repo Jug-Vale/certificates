@@ -50,8 +50,6 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
 
     private Registration registration;
 
-    private ConferenceData conferenceData;
-
     private ConferenceData staticConferenceData;
     
     @Override
@@ -61,7 +59,6 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     
     @PostConstruct
     public void initData() {
-        conferenceData = buildConferenceData(DEFAULT_EXTERNAL_CONF_ID, conferenceName, attendeeEmail, attendeeName);
         staticConferenceData = buildConferenceData(DEFAULT_EXTERNAL_CONF_ID, DEFAULT_CONFERENCE_NAME, DEFAULT_ATTENDEE_NAME, DEFAULT_ATTENDEE_EMAIL);
     }
 
@@ -72,19 +69,19 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
     
     @Override
     public ConferenceData conferenceData() {
-        return conferenceData;
+        return buildConferenceData(DEFAULT_EXTERNAL_CONF_ID, conferenceName, attendeeEmail, attendeeName);
     }
     
     public ConferenceData staticConferenceData() {
         return staticConferenceData;
     }
     
-    private ConferenceData buildConferenceData(Long extenalId, 
+    private ConferenceData buildConferenceData(Long externalId, 
                                                String conferenceName,
                                                String attendeeEmail,
                                                String attendeeName) {
         conference = new Conference();
-        conference.external_id = 1l;
+        conference.external_id = externalId;
         conference.name = conferenceName;
         
         attendee = new Attendee();
