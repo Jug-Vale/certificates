@@ -23,8 +23,8 @@ public class CertificateStorageEmailListener implements CertificateStorageListen
 
     @Override
     @Transactional
-    public void removedCertificateContent(Certificate content) {
-        EmailInfo.delete("content", content);
+    public void removedCertificateContent(Certificate certificate) {
+        EmailInfo.delete("certificateId", certificate.id);
     }
     
     @Override

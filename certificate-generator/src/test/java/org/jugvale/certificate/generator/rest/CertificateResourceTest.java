@@ -48,7 +48,6 @@ public class CertificateResourceTest {
 
     @Test
     public void testCertificateResource() throws Exception {
-        createConferenceData();
         String svgFile = CertificateResourceTest.class.getResource("/svg/simple.svg").getFile();
         CertificateModel model = new CertificateModel();
         model.attendeeNameField = "attendeeName";

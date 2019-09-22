@@ -52,7 +52,7 @@ public class EmailService {
     @Transactional
     public void storeEmail(CertificateContent content, String subject, String body) {
         EmailInfo emailInfo = new EmailInfo();
-        emailInfo.certificateContent = content;
+        emailInfo.certificateId = content.certificate.id;
         emailInfo.sentDate = new Date(System.currentTimeMillis());
         emailInfo.body = body;
         emailInfo.subject = subject;

@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,6 +49,12 @@ public class ConferenceDataFetcherResource {
         System.out.println(conferenceData);
         Registration.persist(conferenceData.getRegistrations());
         return Response.ok(conferenceData).build();
+    }
+    
+    @DELETE
+    @Transactional
+    public void clear() {
+        Registration.deleteAll();
     }
     
 }

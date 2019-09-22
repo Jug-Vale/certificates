@@ -56,10 +56,10 @@ public class CSVProcessor {
         Long confId = getLongValue(CONFERENCE_EXTERNAL_ID_IDX, columns);
         
         Conference conference = conferenceData.getConferences().stream()
-                                                    .filter(c -> c.external_id.equals(confId))
+                                                    .filter(c -> c.externalId.equals(confId))
                                                     .findFirst().orElseGet(() -> {
             Conference newConference = new Conference();
-            newConference.external_id = getLongValue(CONFERENCE_EXTERNAL_ID_IDX, columns);
+            newConference.externalId = getLongValue(CONFERENCE_EXTERNAL_ID_IDX, columns);
             newConference.name = getStringValue(CONFERENCE_NAME_IDX, columns);
             conferenceData.getConferences().add(newConference);
             return newConference;

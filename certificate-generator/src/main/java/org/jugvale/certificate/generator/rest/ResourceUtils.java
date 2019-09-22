@@ -1,14 +1,16 @@
 package org.jugvale.certificate.generator.rest;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
+import org.jugvale.certificate.generator.model.Registration;
+
 public class ResourceUtils {
 
-    
     public static void exceptionIfPresent(Optional<?> op, String message, Status status) {
         if (op.isPresent()) throw new WebApplicationException(message, status);
     }    
@@ -23,6 +25,9 @@ public class ResourceUtils {
     
     public static void exceptionIfNull(Object object, String message, Status status) {
         webApplicationExceptionIfTrue(Objects.isNull(object), message, status);
+    }
+    public static void exceptionIfEmpty(List<Registration> registrations, String message, Status status) {
+        webApplicationExceptionIfTrue(registrations.isEmpty(), message, status);
     }
     
     private static void webApplicationExceptionIfTrue(boolean test, String message, Status status) {

@@ -40,15 +40,13 @@ public class CertificateResource {
     @Inject
     Event<DeletedCertificateEvent> deletedCertificateEvent;
     
-    @QueryParam("async")
-    boolean async;
-    
     @POST
     @Transactional
     @Path("/model/{modelId}/registration/{registrationId}")
     public Certificate generate(@PathParam("modelId") Long modelId,
                                 @PathParam("registrationId") Long registrationId,
-                                @QueryParam("force") boolean force) {
+                                @QueryParam("force") boolean force,
+                                @QueryParam("async") boolean async) {
         
         Registration registration = Registration.findById(registrationId);
         CertificateModel model = CertificateModel.findById(modelId);

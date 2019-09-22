@@ -81,7 +81,7 @@ public class ConfigurationDataFetcher implements ConferenceDataFetcher {
                                                String attendeeEmail,
                                                String attendeeName) {
         conference = new Conference();
-        conference.external_id = externalId;
+        conference.externalId = externalId;
         conference.name = conferenceName;
         
         attendee = new Attendee();

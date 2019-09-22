@@ -39,7 +39,15 @@ public class NewCertificateListener {
         storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.newCertificateContent(certificateStorage));
     }
     
-    public void removeCertificateContent(@ObservesAsync DeletedCertificateEvent deletedCertificateEvent) {
+    public void removeCertificateContentSync(@Observes DeletedCertificateEvent deletedCertificateEvent) {
+        removeCertificateContent(deletedCertificateEvent);
+    }
+    
+    public void removeCertificateContentAsync(@ObservesAsync DeletedCertificateEvent deletedCertificateEvent) {
+        removeCertificateContent(deletedCertificateEvent);
+    }
+
+    private void removeCertificateContent(DeletedCertificateEvent deletedCertificateEvent) {
         Certificate certificate = deletedCertificateEvent.getCertificate();
         storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.removedCertificateContent(certificate));
     }

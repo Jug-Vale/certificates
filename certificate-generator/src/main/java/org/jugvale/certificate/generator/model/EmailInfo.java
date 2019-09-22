@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
@@ -24,6 +23,6 @@ public class EmailInfo extends PanacheEntity {
     @Lob
     public String body;
     
-    @ManyToOne
-    public CertificateContent certificateContent;
+    // soft key
+    public long certificateId;
 }

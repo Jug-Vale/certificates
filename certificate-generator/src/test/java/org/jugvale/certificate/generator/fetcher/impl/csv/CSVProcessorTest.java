@@ -29,7 +29,7 @@ public class CSVProcessorTest {
         Conference conference = conferenceData.getConferences().get(0);
         
         assertEquals("The big IT conf", conference.name);
-        assertEquals(1, conference.external_id);
+        assertEquals(1, conference.externalId);
         
         List<Attendee> attendees = conferenceData.getAttendees();
         assertEquals(3, attendees.size());

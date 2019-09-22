@@ -1,6 +1,7 @@
 package org.jugvale.certificate.generator.rest;
 
 import static io.restassured.RestAssured.get;
+import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -51,6 +52,8 @@ public class ConferenceDataFetcherResourceTest {
         assertEquals(ConfigurationDataFetcher.DEFAULT_ATTENDEE_NAME, attendees.get(0).name);
         assertEquals(ConfigurationDataFetcher.DEFAULT_ATTENDEE_EMAIL, attendees.get(0).email);
         
+        
+        delete(DATA_FETCHERS_URI).then().statusCode(204);
     }
 
     private ConferenceData createConferenceData() {

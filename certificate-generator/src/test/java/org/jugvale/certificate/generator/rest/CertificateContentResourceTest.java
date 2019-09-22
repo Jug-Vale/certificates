@@ -49,6 +49,7 @@ public class CertificateContentResourceTest {
     
     @Test
     public void testCertificateContentResource() throws Exception {
+        mockMailBox.clear();
         createConferenceData();
         String svgFile = CertificateContentResourceTest.class.getResource("/svg/simple.svg").getFile();
         CertificateModel model = new CertificateModel();
