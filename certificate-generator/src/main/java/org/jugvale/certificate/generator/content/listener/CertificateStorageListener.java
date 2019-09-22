@@ -1,13 +1,13 @@
-package org.jugvale.certificate.generator.content.manager;
+package org.jugvale.certificate.generator.content.listener;
 
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateContent;
 
-public interface CertificateStorageManager {
+public interface CertificateStorageListener {
     
-    void storeCertificate(CertificateContent storage);
+    void newCertificateContent(CertificateContent storage);
     
-    void removeStorageForCertificate(Certificate storage);
+    void removedCertificateContent(Certificate storage);
     
     default String name() {
         return this.getClass().getSimpleName();

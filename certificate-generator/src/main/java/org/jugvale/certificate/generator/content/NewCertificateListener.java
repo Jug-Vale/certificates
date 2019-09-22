@@ -1,11 +1,12 @@
 package org.jugvale.certificate.generator.content;
 
+import javax.enterprise.event.Observes;
 import javax.enterprise.event.ObservesAsync;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.Config;
-import org.jugvale.certificate.generator.content.manager.CertificateStorageManager;
+import org.jugvale.certificate.generator.content.listener.CertificateStorageListener;
 import org.jugvale.certificate.generator.event.DeletedCertificateEvent;
 import org.jugvale.certificate.generator.event.NewCertificateEvent;
 import org.jugvale.certificate.generator.model.Certificate;
@@ -22,22 +23,28 @@ public class NewCertificateListener {
     Config config;
     
     @Inject
-    Instance<CertificateStorageManager> storageConsumers;
+    Instance<CertificateStorageListener> storageConsumers;
     
-    public void generateCertificateContent(@ObservesAsync NewCertificateEvent newCertificateEvent) {
-        System.out.println("NEW CERTIFICATE!");
+    public void generateCertificateContentSyncObserver(@Observes NewCertificateEvent newCertificateEvent) {
+        generateCertificateContent(newCertificateEvent);
+    }
+    
+    public void generateCertificateContentAsyncObserver(@ObservesAsync  NewCertificateEvent newCertificateEvent) {
+        generateCertificateContent(newCertificateEvent);
+    }
+
+    private void generateCertificateContent(NewCertificateEvent newCertificateEvent) {
         Certificate certificate = newCertificateEvent.getCertificate();
         CertificateContent certificateStorage = contentGenerator.generate(certificate);
-        storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.storeCertificate(certificateStorage));
+        storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.newCertificateContent(certificateStorage));
     }
     
     public void removeCertificateContent(@ObservesAsync DeletedCertificateEvent deletedCertificateEvent) {
-        System.out.println("NEW CERTIFICATE!");
         Certificate certificate = deletedCertificateEvent.getCertificate();
-        storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.removeStorageForCertificate(certificate));
+        storageConsumers.stream().filter(this::filterConsumer).forEach(c -> c.removedCertificateContent(certificate));
     }
     
-    public boolean filterConsumer(CertificateStorageManager consumer) {
+    public boolean filterConsumer(CertificateStorageListener consumer) {
         String prop = String.format(CONFIG_TEMPLATE, consumer.name());
         return config.getValue(prop, Boolean.class);
     }

@@ -1,16 +1,16 @@
 package org.jugvale.certificate.generator.rest;
 
-import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
+import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
 
 import org.jugvale.certificate.generator.fetcher.ConferenceData;
@@ -21,26 +21,36 @@ import org.jugvale.certificate.generator.model.CertificateModel;
 import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.mailer.Mail;
+import io.quarkus.mailer.MockMailbox;
+import io.quarkus.test.Mock;
 import io.quarkus.test.junit.QuarkusTest;
 
 /**
  * CertificateResourceTest
  */
 @QuarkusTest
-public class CertificateResourceTest {
+public class CertificateContentResourceTest {
 
     private static final String CERTIFICATE_URI = "/certificate";
     private static final String CERTIFICATE_URI_PARAM = CERTIFICATE_URI + "/{id}";
     private static final String CERTIFICATE_CONTENT_URI = CERTIFICATE_URI_PARAM + "/content";
     private static final String CERTIFICATE_GENERATE = CERTIFICATE_URI + "/model/{modelId}/registration/{registrationId}";
+    
     private static final String CERTIFICATE_MODEL_URI = "/certificate-model";
+    
     private static final String DATA_FETCHERS_URI = "/conference-data-fetchers";
     private static final String DATA_FETCHERS_URI_PARAM = DATA_FETCHERS_URI + "/{name}";
+    
+    private static final String CERTIFICATE_CONTENT_EMAIL_URI = "certificate-content/{contentId}/send-email";
 
+    @Inject
+    MockMailbox mockMailBox;
+    
     @Test
-    public void testCertificateResource() throws Exception {
+    public void testCertificateContentResource() throws Exception {
         createConferenceData();
-        String svgFile = CertificateResourceTest.class.getResource("/svg/simple.svg").getFile();
+        String svgFile = CertificateContentResourceTest.class.getResource("/svg/simple.svg").getFile();
         CertificateModel model = new CertificateModel();
         model.attendeeNameField = "attendeeName";
         model.certificateKeyField = "certificateKey";
@@ -53,24 +63,29 @@ public class CertificateResourceTest {
         
         Registration registration = createConferenceData().getRegistrations().get(0);
         
-        post(CERTIFICATE_GENERATE, model.id, 123456l).then().statusCode(412);
-        post(CERTIFICATE_GENERATE, 123456l, registration.id).then().statusCode(412);
         Certificate certificate = post(CERTIFICATE_GENERATE, model.id, registration.id).then()
                                                                                        .statusCode(200)
                                                                                        .extract()
                                                                                        .as(Certificate.class);
-        post(CERTIFICATE_GENERATE, model.id, registration.id).then().statusCode(409);
         
-        assertEquals(registration.id, certificate.registration.id);
-        assertEquals(model.id, certificate.certificateModel.id);
-        assertNotNull(certificate.generationKey);
+        CertificateContent[] content = get(CERTIFICATE_CONTENT_URI, certificate.id).then().extract().as(CertificateContent[].class);
         
-        CertificateContent[] contents = get(CERTIFICATE_CONTENT_URI, certificate.id).then()
-                                                                                    .extract()
-                                                                                    .as(CertificateContent[].class);
-        assertEquals(certificate.id, contents[0].certificate.id);
+        post(CERTIFICATE_CONTENT_EMAIL_URI, content[0].id).then().statusCode(200);
         
-        delete(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(204);
+        
+        assertEquals(1, mockMailBox.getTotalMessagesSent());
+        List<Mail> messagesSentTo = mockMailBox.getMessagesSentTo(registration.attendee.email);
+        Mail mail = messagesSentTo.get(0);
+        
+        String formattedParams = String.format("%s %s %s", registration.conference.name, 
+                                                           registration.attendee.name, 
+                                                           certificate.generationKey);
+        String subject = "subject " + formattedParams;
+        String body = "body " + formattedParams;
+        assertEquals(mail.getSubject(), subject);
+        assertEquals(mail.getText(), body);
+        assertEquals(1, mail.getAttachments().size());
+        // TODO: correctly check the attachment content
     }
     
     private ConferenceData createConferenceData() {

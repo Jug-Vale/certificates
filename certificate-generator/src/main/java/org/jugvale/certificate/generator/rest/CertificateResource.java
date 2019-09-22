@@ -1,11 +1,13 @@
 package org.jugvale.certificate.generator.rest;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,6 +20,7 @@ import org.jugvale.certificate.generator.CertificateKeyGenerator;
 import org.jugvale.certificate.generator.event.DeletedCertificateEvent;
 import org.jugvale.certificate.generator.event.NewCertificateEvent;
 import org.jugvale.certificate.generator.model.Certificate;
+import org.jugvale.certificate.generator.model.CertificateContent;
 import org.jugvale.certificate.generator.model.CertificateModel;
 import org.jugvale.certificate.generator.model.Registration;
 
@@ -33,6 +36,9 @@ public class CertificateResource {
     
     @Inject
     Event<DeletedCertificateEvent> deletedCertificateEvent;
+    
+    @QueryParam("async")
+    boolean async;
     
     @POST
     @Transactional
@@ -59,8 +65,11 @@ public class CertificateResource {
         
         Certificate.persist(certificate);
         
-        newCertificateEvent.fireAsync(new NewCertificateEvent(certificate));
-        
+        if (async) {
+            newCertificateEvent.fireAsync(new NewCertificateEvent(certificate));
+        } else {
+            newCertificateEvent.fire(new NewCertificateEvent(certificate));
+        }
         return certificate;
     }
     
@@ -72,6 +81,14 @@ public class CertificateResource {
         ResourceUtils.exceptionIfNull(certificate, "Certificate not found", Status.NOT_FOUND);
         deletedCertificateEvent.fireAsync(new DeletedCertificateEvent(certificate))
                                .thenApply(e -> Certificate.delete("id", id));
+    }
+    
+    @GET
+    @Path("{id}/content")
+    public List<CertificateContent> getContent(@PathParam("id") Long id) {
+        Certificate certificate = Certificate.findById(id);
+        ResourceUtils.exceptionIfNull(certificate, "Certificate not found", Status.NOT_FOUND);
+        return CertificateContent.find("certificate", certificate).list();
     }
         
 }

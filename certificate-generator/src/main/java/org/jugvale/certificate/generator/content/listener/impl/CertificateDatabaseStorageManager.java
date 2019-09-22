@@ -1,21 +1,20 @@
-package org.jugvale.certificate.generator.content.manager.impl;
+package org.jugvale.certificate.generator.content.listener.impl;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 
-import org.jugvale.certificate.generator.content.manager.CertificateStorageManager;
+import org.jugvale.certificate.generator.content.listener.CertificateStorageListener;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateContent;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 @ApplicationScoped
-public class CertificateDatabaseStorageManager implements CertificateStorageManager {
+public class CertificateDatabaseStorageManager implements CertificateStorageListener {
 
     @Override
     @Transactional
-    public void storeCertificate(CertificateContent storage) {
-        System.out.println("PERSISTING " + storage.content);
+    public void newCertificateContent(CertificateContent storage) {
         storage.persist();
     }
 
@@ -25,7 +24,7 @@ public class CertificateDatabaseStorageManager implements CertificateStorageMana
 
     @Override
     @Transactional
-    public void removeStorageForCertificate(Certificate certificate) {
+    public void removedCertificateContent(Certificate certificate) {
         CertificateContent.find("certificate", certificate)
                           .list()
                           .forEach(PanacheEntityBase::delete);
