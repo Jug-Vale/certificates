@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.mailer.Mail;
 import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 
 /**
  * CertificateResourceTest
@@ -67,12 +68,17 @@ public class CertificateContentResourceTest {
                                                                                        .extract()
                                                                                        .as(Certificate.class);
         
-        CertificateContent[] content = get(CERTIFICATE_CONTENT_URI, certificate.id).then().extract().as(CertificateContent[].class);
-        
-        post(CERTIFICATE_CONTENT_EMAIL_URI, content[0].id).then().statusCode(200);
-        
-        
         assertEquals(1, mockMailBox.getTotalMessagesSent());
+        
+        CertificateContent content = given().accept(ContentType.JSON)
+                                              .get(CERTIFICATE_CONTENT_URI, certificate.id)
+                                              .then()
+                                              .extract()
+                                              .as(CertificateContent.class);
+        
+        post(CERTIFICATE_CONTENT_EMAIL_URI, content.id).then().statusCode(200);
+        assertEquals(2, mockMailBox.getTotalMessagesSent());
+        
         List<Mail> messagesSentTo = mockMailBox.getMessagesSentTo(registration.attendee.email);
         Mail mail = messagesSentTo.get(0);
         

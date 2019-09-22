@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.inject.Inject;
 import javax.json.bind.JsonbBuilder;
 
 import org.apache.commons.io.IOUtils;
@@ -24,6 +25,7 @@ import org.jugvale.certificate.generator.model.CertificateModel;
 import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.mailer.MockMailbox;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 
@@ -40,6 +42,9 @@ public class CertificateResourceTest {
     private static final String CERTIFICATE_MODEL_URI = "/certificate-model";
     private static final String DATA_FETCHERS_URI = "/conference-data-fetchers";
     private static final String DATA_FETCHERS_URI_PARAM = DATA_FETCHERS_URI + "/{name}";
+    
+    @Inject
+    MockMailbox mockMailBox;
 
     @Test
     public void testCertificateResource() throws Exception {
@@ -68,6 +73,8 @@ public class CertificateResourceTest {
         assertEquals(registration.id, certificate.registration.id);
         assertEquals(model.id, certificate.certificateModel.id);
         assertNotNull(certificate.generationKey);
+        assertEquals(1, mockMailBox.getTotalMessagesSent());
+        
         
         CertificateContent content = given().accept(ContentType.JSON)
                                             .get(CERTIFICATE_CONTENT_URI, certificate.id)
