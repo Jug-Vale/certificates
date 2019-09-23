@@ -22,6 +22,7 @@ import org.jugvale.certificate.generator.fetcher.impl.ConfigurationDataFetcher;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateContent;
 import org.jugvale.certificate.generator.model.CertificateModel;
+import org.jugvale.certificate.generator.model.CertificateSummary;
 import org.jugvale.certificate.generator.model.Registration;
 import org.junit.jupiter.api.Test;
 
@@ -107,6 +108,18 @@ public class CertificateResourceTest {
         
         get(CERTIFICATE_CONTENT_URI, "not_existing_key").then().statusCode(404);
         
+        CertificateSummary[] certificates = get(CERTIFICATE_URI).then()
+                                                               .statusCode(200)
+                                                               .extract()
+                                                               .as(CertificateSummary[].class);
+        
+        assertEquals(1, certificates.length);
+        assertEquals(certificate.generationKey, certificates[0].getKey());
+        assertEquals(certificate.registration.attendee.name, certificates[0].getAttendeeName());
+        assertEquals(certificate.registration.attendee.email, certificates[0].getAttendeeEmail());
+        assertEquals(certificate.registration.conference.externalId, certificates[0].getConferenceId());
+        assertEquals(certificate.registration.conference.name, certificates[0].getConferenceName());
+                
         delete(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(204);
     }
     

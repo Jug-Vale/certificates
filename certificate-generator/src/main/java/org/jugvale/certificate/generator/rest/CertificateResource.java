@@ -3,11 +3,13 @@ package org.jugvale.certificate.generator.rest;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,6 +27,7 @@ import org.jugvale.certificate.generator.event.NewCertificateEvent;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateContent;
 import org.jugvale.certificate.generator.model.CertificateModel;
+import org.jugvale.certificate.generator.model.CertificateSummary;
 import org.jugvale.certificate.generator.model.Registration;
 
 @Path("certificate")
@@ -39,6 +42,16 @@ public class CertificateResource {
     
     @Inject
     Event<DeletedCertificateEvent> deletedCertificateEvent;
+    
+    @GET
+    public List<CertificateSummary> all(@QueryParam("page") @DefaultValue("0") int page, 
+                                        @QueryParam("pageSize") @DefaultValue("100") int pageSize) {
+        return Certificate.findAll().page(page, pageSize)
+                                    .stream()
+                                    .map(p -> (Certificate) p)
+                                    .map(CertificateSummary::of)
+                                    .collect(Collectors.toList());
+    }
     
     @POST
     @Transactional
