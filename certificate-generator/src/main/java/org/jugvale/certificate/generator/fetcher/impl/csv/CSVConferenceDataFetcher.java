@@ -49,6 +49,7 @@ public class CSVConferenceDataFetcher implements ConferenceDataFetcher {
             logger.infov("CSV file path {0} not specified.", FILE_PROP);
             return ConferenceData.empty();
         }
+        logger.infov("Loading data from file {0}", FILE_PROP);
         return CSVProcessor.processCSV(csvConfFilePath);
     }
 
