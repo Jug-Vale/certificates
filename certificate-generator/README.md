@@ -97,3 +97,13 @@ JUG CFP users can run the following query to export a valid CSV:
 ~~~
 select e.id, e.nome, p.nome, p.email, 'true' from Evento e inner join Inscricao i inner join Participante p where e.id = i.evento_id and p.id = i.participante_id and compareceu = b'1' and e.id = {evento.id} into outfile 'registration.csv' fields terminated by ',' enclosed by '"' lines terminated by '\n'
 ~~~
+
+## Extending
+
+It is possible to extend this app by:
+
+* **Creating new Fetchers**: It is possible to implement the interface `org.jugvale.certificate.generator.fetcher.ConferenceDataFetcher` to retrieve data from other sources than CSV;
+* **Creating new certificate consumers**: Implemeting the interface `org.jugvale.certificate.generator.content.listener.CertificateStorageListener` makes possible to plug a export service to generated certificates. Right now there are two implementations: for email and database (store the certificate content in the database). Other possible implementation are: filesystem, Google Drive, One Drive, chat bots and more.
+
+
+
