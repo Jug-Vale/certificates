@@ -16,7 +16,7 @@ Make sure to setup the following properties:
 | `certificate.storage.consumer.email.enable`    | boolean | Automatic email when certificate is generated                                                                      |
 | `certificate.email.subject`                    | text    | Email subject. Can use the following placeholders: **attendee.name**,* **conference.name** and **certificate.key** |
 | `certificate.email.body`                       | text    | Email body. Can use the same placeholders as subject.                                                              |
-
+| `certificate.fetcher.csv.file`                       | text    | File that will be loaded when the CSV fetcher is executed                                                              |
 The email and database configurations can be found in Quarkus documentation:
 
 * [Quarkus email configuration](https://quarkus.io/guides/sending-emails)
@@ -49,6 +49,10 @@ conference2 original ID,Conference2 name,Attendee1 Name,Attendee1 email,Attende1
 Here's a line example:
 ~~~
 1,"The big IT conf",Antonio Camara,antonio@email.com,true
+~~~
+Once a CSV file is correctly configured it is required to load it. The following REST call should load the configured CSV file:
+
+~~~
 ~~~
 
 The app works generating certificates based on a SVG file. The SVG file must have identified which field will hold the attendee name and the certificate id. 
