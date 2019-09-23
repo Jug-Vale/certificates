@@ -90,4 +90,10 @@ Then with the registration ID you can generate the certificate:
 
 Right now the app does not make batch generation and event sending, it is up to the client to send certification to each registration.
 
-If you want to re-generate a certificate and do the whole process use the boolean query param force=true.
+If you want to re-generate a certificate and do the whole process use the boolean query param `force=true`.
+
+
+JUG CFP users can run the following query to export a valid CSV:
+~~~
+select e.id, e.nome, p.nome, p.email, 'true' from Evento e inner join Inscricao i inner join Participante p where e.id = i.evento_id and p.id = i.participante_id and compareceu = b'1' and e.id = {evento.id} into outfile 'registration.csv' fields terminated by ',' enclosed by '"' lines terminated by '\n'
+~~~
