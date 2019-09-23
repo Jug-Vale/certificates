@@ -14,9 +14,13 @@ Make sure to setup the following properties:
 |------------------------------------------------|---------|--------------------------------------------------------------------------------------------------------------------|
 | `certificate.storage.consumer.database.enable` | boolean | Enable certificate storage in the database                                                                         |
 | `certificate.storage.consumer.email.enable`    | boolean | Automatic email when certificate is generated                                                                      |
-| `certificate.email.subject`                    | text    | Email subject. Can use the following placeholders: **attendee.name**,* **conference.name** and **certificate.key** |
+| `certificate.email.subject`                    | text    | Email subject. Can use the following placeholders: **attendee.name**, **conference.name** and **certificate.key** |
 | `certificate.email.body`                       | text    | Email body. Can use the same placeholders as subject.                                                              |
-| `certificate.fetcher.csv.file`                       | text    | File that will be loaded when the CSV fetcher is executed                                                              |
+| `certificate.fetcher.csv.file`                 | text    | File that will be loaded when the CSV fetcher is used                                                              |
+| `certificate.startup.fetch`                    | boolean | If true fetches data when the server is starting                                                                   |
+| `certificate.startup.fetcher.name`             | text    | The fetcher to be used if it is running on startup (CSV and Configuration are supported)                           |
+
+
 The email and database configurations can be found in Quarkus documentation:
 
 * [Quarkus email configuration](https://quarkus.io/guides/sending-emails)
@@ -50,9 +54,11 @@ Here's a line example:
 ~~~
 1,"The big IT conf",Antonio Camara,antonio@email.com,true
 ~~~
-Once a CSV file is correctly configured it is required to load it. The following REST call should load the configured CSV file:
+Once a CSV file is correctly configured it is required to load it. The app can be loaded automatically if the system property `certificate.startup.fetch` is set to *true* and `certificate.startup.fetcher.name` is set to CSV.
 
+If It is also possible to load data after the server has started using the following REST call:
 ~~~
+curl -X POST "{HOST}/conference-data-fetchers/CSV" -H "accept: application/json"
 ~~~
 
 The app works generating certificates based on a SVG file. The SVG file must have identified which field will hold the attendee name and the certificate id. 
@@ -95,7 +101,6 @@ Then with the registration ID you can generate the certificate:
 Right now the app does not make batch generation and event sending, it is up to the client to send certification to each registration.
 
 If you want to re-generate a certificate and do the whole process use the boolean query param `force=true`.
-
 
 JUG CFP users can run the following query to export a valid CSV:
 ~~~
