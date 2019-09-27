@@ -25,21 +25,21 @@ import org.jugvale.certificate.generator.model.Registration;
 public class ConferenceDataFetcherResource {
 
     @Inject
-    ConferenceDataFetcherService service;
+    ConferenceDataFetcherService fetcherService;
     
     @GET
     public Map<String, String> fetchers() {
-        return service.fetchers();
+        return fetcherService.fetchers();
     }
     
     @POST
-    @Transactional
     @Path("{fetcherName}")
+    @Transactional
     public Response fetchData(@PathParam("fetcherName") String fetcherName) {
-        Optional<ConferenceDataFetcher> fetcherOp = service.findFetcher(fetcherName);
+        Optional<ConferenceDataFetcher> fetcherOp = fetcherService.findFetcher(fetcherName);
         ConferenceDataFetcher fetcher = ResourceUtils.exceptionIfNotPresent(fetcherOp, "", Status.NOT_FOUND);
         ConferenceData conferenceData = fetcher.conferenceData();
-        Registration.persist(conferenceData.getRegistrations());
+        conferenceData.getRegistrations().forEach(Registration::merge);
         return Response.ok(conferenceData).build();
     }
     

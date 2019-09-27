@@ -26,5 +26,18 @@ public class Registration extends PanacheEntity {
                 + conference + "]";
     }
     
+    public static void merge(Registration registration) {
+        registration.attendee = Attendee.merge(registration.attendee);
+        registration.conference = Conference.merge(registration.conference);
+        Registration.find("attendee = ?1 and conference = ?2",  registration.attendee, registration.conference)
+                    .stream().findFirst()
+                    .ifPresentOrElse(r ->  {
+                        Registration existingRegistration = (Registration) r;
+                        existingRegistration.attendance = registration.attendance; 
+                        r.persist();
+                        registration.id = existingRegistration.id;
+                      }, registration::persist);
+    }
+    
 
 }

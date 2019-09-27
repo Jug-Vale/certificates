@@ -64,10 +64,11 @@ public class CertificateContentResourceTest {
         
         Registration registration = createConferenceData().getRegistrations().get(0);
         
-        Certificate certificate = post(CERTIFICATE_GENERATE, model.id, registration.id).then()
-                                                                                       .statusCode(200)
-                                                                                       .extract()
-                                                                                       .as(Certificate.class);
+        Certificate certificate = given().queryParam("force", "true")
+                                         .post(CERTIFICATE_GENERATE, model.id, registration.id).then()
+                                         .statusCode(200)
+                                         .extract()
+                                         .as(Certificate.class);
         
         assertEquals(1, mockMailBox.getTotalMessagesSent());
         

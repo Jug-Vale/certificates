@@ -26,8 +26,4 @@ public class ConferenceDataFetcherService {
                            .findFirst();
     }
     
-    public void runFetcher() {
-        
-    }
-
 }

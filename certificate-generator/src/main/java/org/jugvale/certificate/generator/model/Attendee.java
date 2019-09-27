@@ -1,8 +1,9 @@
 package org.jugvale.certificate.generator.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
+import io.quarkus.hibernate.orm.panache.Panache;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 
 /**
@@ -10,17 +11,22 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
  */
 @Entity
 public class Attendee extends PanacheEntity {
-
-    @Id
-    public Long id;
     
     public String name;
 
+    @Column(unique=true)
     public String email;
 
     @Override
     public String toString() {
         return "Attendee [id=" + id + ", name=" + name + ", email=" + email + "]";
+    }
+    
+    public static Attendee merge(Attendee attendee) {
+        Attendee.find("email", attendee.email)
+                .stream().findFirst()
+                .ifPresent(existingAttendee -> attendee.id  = ((Attendee) existingAttendee).id);
+        return Panache.getEntityManager().merge(attendee);
     }
 
 }
