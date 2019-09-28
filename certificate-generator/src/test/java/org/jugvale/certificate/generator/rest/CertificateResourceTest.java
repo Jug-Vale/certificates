@@ -6,6 +6,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.post;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
@@ -64,10 +65,12 @@ public class CertificateResourceTest {
         
         post(CERTIFICATE_GENERATE, model.id, 123456l).then().statusCode(412);
         post(CERTIFICATE_GENERATE, 123456l, registration.id).then().statusCode(412);
-        Certificate certificate = post(CERTIFICATE_GENERATE, model.id, registration.id).then()
-                                                                                       .statusCode(200)
-                                                                                       .extract()
-                                                                                       .as(Certificate.class);
+        Certificate certificate = post(CERTIFICATE_GENERATE, 
+                                       model.id, 
+                                       registration.id).then()
+                                                       .statusCode(200)
+                                                       .extract()
+                                                       .as(Certificate.class);
         post(CERTIFICATE_GENERATE, model.id, registration.id).then().statusCode(409);
         
         assertEquals(registration.id, certificate.registration.id);
@@ -109,9 +112,9 @@ public class CertificateResourceTest {
         get(CERTIFICATE_CONTENT_URI, "not_existing_key").then().statusCode(404);
         
         CertificateSummary[] certificates = get(CERTIFICATE_URI).then()
-                                                               .statusCode(200)
-                                                               .extract()
-                                                               .as(CertificateSummary[].class);
+                                                                .statusCode(200)
+                                                                .extract()
+                                                                .as(CertificateSummary[].class);
         
         assertEquals(1, certificates.length);
         assertEquals(certificate.generationKey, certificates[0].getKey());
@@ -119,8 +122,35 @@ public class CertificateResourceTest {
         assertEquals(certificate.registration.attendee.email, certificates[0].getAttendeeEmail());
         assertEquals(certificate.registration.conference.externalId, certificates[0].getConferenceId());
         assertEquals(certificate.registration.conference.name, certificates[0].getConferenceName());
-                
-        delete(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(204);
+        
+        Certificate regeneratedCertificate = given().queryParam("force", "true")
+                                                    .post(CERTIFICATE_GENERATE, 
+                                                          model.id, 
+                                                          registration.id).then()
+                                                                          .statusCode(200)
+                                                                          .extract()
+                                                                          .as(Certificate.class);
+        
+        assertEquals(certificate.id, regeneratedCertificate.id);
+        assertNotEquals(certificate.generationKey, regeneratedCertificate.generationKey);
+        
+        contentBinByKeyIS = given().accept("application/pdf")
+                                   .get(CERTIFICATE_CONTENT_URI, certificate.id)
+                                   .then()
+                                   .statusCode(200)
+                                   .extract()
+                                   .asInputStream();
+
+        byte[] newContentBin = IOUtils.toByteArray(contentBinByKeyIS);
+        
+        assertNotEquals(contentBinByKey, newContentBin);
+        get(CERTIFICATE_URI_PARAM, certificate.id).then().statusCode(200);
+        
+        
+        
+
+        
+        delete(CERTIFICATE_URI_PARAM, regeneratedCertificate.id).then().statusCode(204);
     }
     
     private ConferenceData createConferenceData() {

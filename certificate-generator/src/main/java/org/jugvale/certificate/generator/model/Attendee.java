@@ -23,8 +23,8 @@ public class Attendee extends PanacheEntity {
     }
     
     public static Attendee merge(Attendee attendee) {
-        Attendee.find("email", attendee.email)
-                .stream().findFirst()
+        Attendee.stream("email", attendee.email)
+                .findFirst()
                 .ifPresent(existingAttendee -> attendee.id  = ((Attendee) existingAttendee).id);
         return Panache.getEntityManager().merge(attendee);
     }

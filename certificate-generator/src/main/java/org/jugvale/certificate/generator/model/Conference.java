@@ -23,8 +23,8 @@ public class Conference extends PanacheEntity {
     }
     
     public static Conference merge(Conference conference) {
-        Conference.find("externalId", conference.externalId)
-                 .stream().findFirst()
+        Conference.stream("externalId", conference.externalId)
+                  .findFirst()
                  .ifPresent(existingConference -> conference.id = ((Conference) existingConference).id);
         return Panache.getEntityManager().merge(conference);
     }

@@ -1,5 +1,6 @@
 package org.jugvale.certificate.generator.rest;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -53,6 +54,15 @@ public class CertificateResource {
                                     .collect(Collectors.toList());
     }
     
+    @GET
+    @Path("{id}")
+    public CertificateSummary all(@PathParam("id") long id) {
+        return Certificate.stream("id", id)
+                          .map(c -> ((Certificate) c))
+                          .map(CertificateSummary::of)
+                          .findFirst().orElseThrow(() -> new WebApplicationException(404));
+    }
+    
     @POST
     @Transactional
     @Path("/model/{modelId}/registration/{registrationId}")
@@ -65,16 +75,21 @@ public class CertificateResource {
         CertificateModel model = CertificateModel.findById(modelId);
         ResourceUtils.exceptionIfNull(model, "Certification Model does not exist", Status.PRECONDITION_FAILED);
         ResourceUtils.exceptionIfNull(registration, "Registration does not exist", Status.PRECONDITION_FAILED);
-        Optional<?> certificateOp = Certificate.find("registration", registration)
-                                               .list()
-                                               .stream()
-                                               .filter(c -> !force)
+        Optional<?> certificateOp = Certificate.stream("registration", registration)
                                                .findAny();
-        ResourceUtils.exceptionIfPresent(certificateOp, "Certificate for registration already generated", Status.CONFLICT);
         
-        Certificate certificate = new Certificate();
+        if (!force && certificateOp.isPresent()) {
+            ResourceUtils.exceptionIfPresent(certificateOp, 
+                                             "Certificate for registration already generated", 
+                                             Status.CONFLICT);
+        }
+        
+        Certificate certificate = certificateOp.stream()
+                                               .map(c -> ((Certificate) c))
+                                               .peek(c ->  c.lastModified = new Date(System.currentTimeMillis()))
+                                               .peek(c -> deletedCertificateEvent.fireAsync(new DeletedCertificateEvent(c)))
+                                               .findAny().orElseGet(() -> Certificate.with(registration));
         certificate.certificateModel = model;
-        certificate.registration = registration;
         certificate.generationKey = keyGenerator.generateKey();
         
         Certificate.persist(certificate);
