@@ -3,6 +3,7 @@ package org.jugvale.certificate.generator.model;
 import java.sql.Date;
 
 import javax.json.bind.annotation.JsonbDateFormat;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -18,10 +19,11 @@ public class Certificate extends PanacheEntity {
   @Column(length = 100, unique = true)
   public String generationKey;
 
-  @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+  @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ") 
   public Date lastModified;
 
   @ManyToOne
+  @JsonbTransient
   public CertificateModel certificateModel;
   
   @ManyToOne

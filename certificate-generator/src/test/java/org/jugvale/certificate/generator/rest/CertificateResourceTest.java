@@ -74,7 +74,6 @@ public class CertificateResourceTest {
         post(CERTIFICATE_GENERATE, model.id, registration.id).then().statusCode(409);
         
         assertEquals(registration.id, certificate.registration.id);
-        assertEquals(model.id, certificate.certificateModel.id);
         assertNotNull(certificate.generationKey);
         assertEquals(1, mockMailBox.getTotalMessagesSent());
         
