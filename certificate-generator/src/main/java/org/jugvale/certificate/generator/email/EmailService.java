@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 import org.jugvale.certificate.generator.model.Certificate;
 import org.jugvale.certificate.generator.model.CertificateContent;
 import org.jugvale.certificate.generator.model.EmailInfo;
@@ -20,6 +21,8 @@ public class EmailService {
     public static final String ATTENDEE_NAME_PLACEHOLDER = "attendee.name";
     public static final String CONFERENCE_NAME_PLACEHOLDER = "conference.name";
     public static final String CERTIFICATE_KEY_PLACEHOLDER = "certificate.key";
+    
+    Logger logger = Logger.getLogger(EmailService.class);
     
     @ConfigProperty(name = "certificate.email.subject")
     String emailSubject;
@@ -41,6 +44,9 @@ public class EmailService {
         
         final String subject = makeReplacements(initialSubject, certificate);
         final String body = makeReplacements(initialBody, certificate);
+        
+        logger.infov("Sending email to {0}", email);
+        logger.debugv("Email content: \n Subject: {0}\nBody: {1}", subject, body);
         
         reactiveMailer.send(Mail.withText(email, subject, body)
                                 .addAttachment("certificate.pdf", 

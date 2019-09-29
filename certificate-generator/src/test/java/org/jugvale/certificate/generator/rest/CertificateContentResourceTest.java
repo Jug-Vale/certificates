@@ -43,6 +43,9 @@ public class CertificateContentResourceTest {
     private static final String DATA_FETCHERS_URI_PARAM = DATA_FETCHERS_URI + "/{name}";
     
     private static final String CERTIFICATE_CONTENT_EMAIL_URI = "certificate-content/{contentId}/send-email";
+    
+    private static final String CERTIFICATE_CONTENT_EMAIL_BY_CERTIFICATE_URI = "certificate-content/certificate/{registrationId}/send-email";
+    private static final String CERTIFICATE_CONTENT_EMAIL_BY_REGISTRATION_URI = "certificate-content/registration/{certificateId}/send-email";
 
     @Inject
     MockMailbox mockMailBox;
@@ -92,7 +95,11 @@ public class CertificateContentResourceTest {
         assertEquals(mail.getSubject(), subject);
         assertEquals(mail.getText(), body);
         assertEquals(1, mail.getAttachments().size());
-        // TODO: correctly check the attachment content
+        
+        post(CERTIFICATE_CONTENT_EMAIL_BY_CERTIFICATE_URI, content.certificate.id).then().statusCode(200);
+        assertEquals(3, mockMailBox.getTotalMessagesSent());
+        post(CERTIFICATE_CONTENT_EMAIL_BY_REGISTRATION_URI, content.certificate.registration.id).then().statusCode(200);
+        assertEquals(4, mockMailBox.getTotalMessagesSent());
     }
     
     private ConferenceData createConferenceData() {
